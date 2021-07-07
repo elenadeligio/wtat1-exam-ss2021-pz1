@@ -1,0 +1,8 @@
+{
+  "name": "my-app-2",
+  "template": "Default",
+  "isConfigured": {
+    "client": true,
+    "server": true
+  }
+}
