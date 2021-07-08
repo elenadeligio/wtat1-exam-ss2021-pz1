@@ -1,0 +1,47 @@
+<h2 class="center">List of Questions:</h2>
+
+<div class="center">
+    <a class="button" href="/questions/new">Create Question</a>
+</div>
+<!-- #crud_index_view - start -->
+<table class="table">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Text</th>
+        <th>Date</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- #feature_view - start -->
+    <% questions.forEach(question => { %>
+        <tr>
+            <td>
+                <a href="<%= `/questions/${question._id}` %>">
+                    <%= question.title %>
+                </a>
+            </td>
+            <td>
+                <%= question.text %>
+            </td>
+            <td>
+                <a href="<%= `/questions/${question._id}` %>">
+                    <%= question.date %>
+                </a>
+            </td>
+            <!-- #feature_view - end -->
+            <td>
+                <a href="<%=`questions/${question._id}/edit`%>">
+                    Edit
+                </a>
+            </td>
+            <td>
+                <a href="<%= `questions/${question._id}/delete?_method=DELETE` %>" onclick="return confirm('Are you sure you want to delete this record?')" a>Delete</a>
+            </td>
+        </tr>
+    <% }); %>
+    </tbody>
+</table>
+<!-- #crud_index_view - end -->

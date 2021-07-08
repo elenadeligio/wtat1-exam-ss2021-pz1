@@ -7,6 +7,6 @@ afterAll(async () => {
 
 module.exports = {
     app: require('../server'),
-    User: require('../models/user_schema'),
+    User: require('../models/user'),
     request: require('supertest')
 }

@@ -1,0 +1,12 @@
+<!-- #second_action_view - start -->
+<div class="data-form">
+    <form class="form-signin" action="<%=`/questions/${question._id}/update?_method=PUT`%>" method="POST">
+        <h2 class="form-signin-heading">Edit Question:</h2>
+        <label for="inputTitle">Title</label>
+        <input type="text" name="title" id="inputTitle" class="form-control" value="<%= question.title %>" placeholder="Title" autofocus>
+        <label for="inputText">Text</label>
+        <input type="text" name="text" id="inputText" class="form-control" value="<%= question.text %>" placeholder="Text" autofocus>
+        <br/><button class="btn btn-lg btn-primary btn-block" type="submit">Save</button>
+    </form>
+</div>
+<!-- #second_action_view - end -->

@@ -1,33 +1,76 @@
-// Importing required modules
-const cors = require('cors');
-const express = require('express');
+"use strict";
 
-// parse env variables
-require('dotenv').config();
+const express = require("express"),
+    layouts = require("express-ejs-layouts"),
+    app = express(),
+    router = require("./routes/index"),
+    mongoose = require("mongoose"),
+    methodOverride = require("method-override"),
+    passport = require("passport"),
+    cookieParser = require("cookie-parser"),
+    expressSession = require("express-session"),
+    connectFlash = require("connect-flash"),
+    User = require("./models/user"); //for Passport
 
-require("./helpers/db/mongodb.js")();
+mongoose.connect(
+    "mongodb://localhost:27017/q_a",
+    { useNewUrlParser: true }
+);
+mongoose.set("useCreateIndex", true);
 
-// Configuring port
-const port = process.env.PORT || 9000;
 
-const app = express();
+app.set("port", process.env.PORT || 9000);
+app.set("view engine", "ejs");
 
-// Configure middlewares
-app.use(cors());
+
+app.use(
+    methodOverride("_method", {
+        methods: ["POST", "GET"]
+    })
+);
+
+
+app.use(layouts);
+app.use(express.static("public"));
+
+app.use(
+    express.urlencoded({
+        extended: false
+    })
+);
 app.use(express.json());
 
-app.set('view engine', 'html');
-app.set('view engine', 'ejs')
+app.use(cookieParser("secretQa123"));
+app.use(
+    expressSession({
+        secret: "secretQa123",
+        cookie: {
+            maxAge: 4000000
+        },
+        resave: false,
+        saveUninitialized: false
+    })
+);
 
-// Static folder
-app.use(express.static(__dirname + '/views/'));
+app.use(connectFlash());
 
-// Defining route middleware
-app.use('/api', require('./routes/api'));
-app.use('/users', require('./routes/users'));
-if (process.env.NODE_ENV !== 'test') {
-// Listening to port
-    app.listen(port);
-    console.log(`Listening On http://localhost:${port}/api`);
-}
-module.exports = app;
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use((req, res, next) => {
+    res.locals.loggedIn = req.isAuthenticated();
+    res.locals.currentUser = req.user;
+    res.locals.flashMessages = req.flash();
+    next();
+});
+
+app.use("/", router);
+
+const server = app.listen(app.get("port"), () => {
+console.log(`Server running at http://localhost:${app.get("port")}`);
+}),
+io = require("socket.io")(server),
+chatController = require("./controllers/chatController")(io);
