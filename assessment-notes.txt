@@ -1,0 +1,13 @@
+Your App Topic is a Q&A - an App where Questions and Answers can be posted.
+
+Your main Resource will be Question with the following fields:
+
+- title
+
+- text
+
+The main Feature is: listing the questions.
+
+The feature for the API will be voting a question up
+
+Find one more field for your main Resource and write down how you will model the main resource.

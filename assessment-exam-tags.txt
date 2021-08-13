@@ -1,0 +1,468 @@
+---------------#implement_new-------------
+---------------#create_simple_route-------------
+---------------#static_file-------------
+---------------#add_user_field-------------
+./server/models/user.js-1-const mongoose = require("mongoose"),
+./server/models/user.js-2-    { Schema } = require("mongoose"),
+./server/models/user.js-3-    passportLocalMongoose = require("passport-local-mongoose"),
+./server/models/user.js-4-
+./server/models/user.js:5://#add_user_field - start
+./server/models/user.js-6-    userSchema = new Schema(
+./server/models/user.js-7-  {
+./server/models/user.js-8-      name: {
+./server/models/user.js-9-          first: {
+./server/models/user.js-10-              type: String,
+./server/models/user.js-11-              trim: true
+./server/models/user.js-12-          },
+./server/models/user.js-13-          last: {
+--
+--
+./server/models/user.js-25-          required: true,
+./server/models/user.js-26-          lowercase: true,
+./server/models/user.js-27-          unique: true
+./server/models/user.js-28-      },
+./server/models/user.js-29-      password: {
+./server/models/user.js-30-          type: String,
+./server/models/user.js-31-          required: true
+./server/models/user.js-32-      },
+./server/models/user.js:33:    //#add_user_field - end
+./server/models/user.js-34-
+./server/models/user.js-35-      // #association - start
+./server/models/user.js-36-        questions: [{ type: Schema.Types.ObjectId, ref: "Question" }]
+./server/models/user.js-37-      // #association - end
+./server/models/user.js-38-}
+./server/models/user.js-39-);
+./server/models/user.js-40-
+./server/models/user.js-41-userSchema.virtual("fullName").get(function() {
+---------------#crud_view-------------
+./server/views/questions/show.ejs-1-<h1 class="center">Overview for
+./server/views/questions/show.ejs-2-    <%= question.title %>
+./server/views/questions/show.ejs-3-</h1>
+./server/views/questions/show.ejs:4:<!-- #crud_view - start -->
+./server/views/questions/show.ejs-5-<table class="table">
+./server/views/questions/show.ejs-6-    <tr>
+./server/views/questions/show.ejs-7-        <th>Title</th>
+./server/views/questions/show.ejs-8-        <td>
+./server/views/questions/show.ejs-9-            <%= question.title %>
+./server/views/questions/show.ejs-10-        </td>
+./server/views/questions/show.ejs-11-    </tr>
+./server/views/questions/show.ejs-12-    <tr>
+--
+--
+./server/views/questions/show.ejs-17-    </tr>
+./server/views/questions/show.ejs-18-    <tr>
+./server/views/questions/show.ejs-19-        <th>Date</th>
+./server/views/questions/show.ejs-20-        <td>
+./server/views/questions/show.ejs-21-            <%= question.date %>
+./server/views/questions/show.ejs-22-        </td>
+./server/views/questions/show.ejs-23-    </tr>
+./server/views/questions/show.ejs-24-</table>
+./server/views/questions/show.ejs:25:<!-- #crud_view - end -->
+./server/views/questions/show.ejs-26-
+./server/views/questions/show.ejs-27-<div>
+./server/views/questions/show.ejs-28-    <a class="button" href="<%=`/questions/${question._id}/edit`%>">
+./server/views/questions/show.ejs-29-        Edit Question Details
+./server/views/questions/show.ejs-30-    </a>
+./server/views/questions/show.ejs-31-</div>
+./server/views/questions/show.ejs-32-<div>
+./server/views/questions/show.ejs-33-    <a class="button" href="<%= `/questions/${question._id}/delete?_method=DELETE` %>" onclick="return confirm('Are you sure you want to delete this record?')" a>Delete</a>
+---------------#show_draft-------------
+---------------#example_show-------------
+---------------#index_draft-------------
+./server/controllers/questionsController.js-1-"use strict";
+./server/controllers/questionsController.js:2:// #index_draft
+./server/controllers/questionsController.js-3-const Question = require("../models/question"),
+./server/controllers/questionsController.js-4-    // #api_implementation - start
+./server/controllers/questionsController.js-5-    httpStatus = require("http-status-codes"),
+./server/controllers/questionsController.js-6-    User = require("../models/user"),
+./server/controllers/questionsController.js-7-    // #api_implementation - end
+./server/controllers/questionsController.js-8-    getQuestionParams = body => {
+./server/controllers/questionsController.js-9-        return {
+./server/controllers/questionsController.js-10-            title: body.title,
+--
+--
+./server/routes/questionRoutes.js-1-"use strict";
+./server/routes/questionRoutes.js-2-
+./server/routes/questionRoutes.js-3-const router = require("express").Router(),
+./server/routes/questionRoutes.js-4-    questionsController = require("../controllers/questionsController");
+./server/routes/questionRoutes.js:5:// #index_draft
+./server/routes/questionRoutes.js-6-router.get("", questionsController.index, questionsController.indexView);
+./server/routes/questionRoutes.js-7-router.get("/new", questionsController.new);
+./server/routes/questionRoutes.js-8-router.post("/create", questionsController.create, questionsController.redirectView);
+./server/routes/questionRoutes.js-9-router.get("/:id/edit", questionsController.edit);
+./server/routes/questionRoutes.js-10-router.put("/:id/update", questionsController.update, questionsController.redirectView);
+./server/routes/questionRoutes.js-11-router.get("/:id", questionsController.show, questionsController.showView);
+./server/routes/questionRoutes.js-12-router.delete("/:id/delete", questionsController.delete, questionsController.redirectView);
+./server/routes/questionRoutes.js-13-
+---------------#crud_index_view-------------
+./server/views/questions/index.ejs-1-<h2 class="center">List of Questions:</h2>
+./server/views/questions/index.ejs-2-
+./server/views/questions/index.ejs-3-<div class="center">
+./server/views/questions/index.ejs-4-    <a class="button" href="/questions/new">Create Question</a>
+./server/views/questions/index.ejs-5-</div>
+./server/views/questions/index.ejs:6:<!-- #crud_index_view - start -->
+./server/views/questions/index.ejs-7-<table class="table">
+./server/views/questions/index.ejs-8-    <thead>
+./server/views/questions/index.ejs-9-    <tr>
+./server/views/questions/index.ejs-10-        <th>Title</th>
+./server/views/questions/index.ejs-11-        <th>Text</th>
+./server/views/questions/index.ejs-12-        <th>Date</th>
+./server/views/questions/index.ejs-13-        <th>Edit</th>
+./server/views/questions/index.ejs-14-        <th>Delete</th>
+--
+--
+./server/views/questions/index.ejs-39-            </td>
+./server/views/questions/index.ejs-40-            <td>
+./server/views/questions/index.ejs-41-                <a href="<%= `questions/${question._id}/delete?_method=DELETE` %>" onclick="return confirm('Are you sure you want to delete this record?')" a>Delete</a>
+./server/views/questions/index.ejs-42-            </td>
+./server/views/questions/index.ejs-43-        </tr>
+./server/views/questions/index.ejs-44-    <% }); %>
+./server/views/questions/index.ejs-45-    </tbody>
+./server/views/questions/index.ejs-46-</table>
+./server/views/questions/index.ejs:47:<!-- #crud_index_view - end -->
+---------------#mongoose_schema-------------
+./server/models/question.js-1-const mongoose = require("mongoose"),
+./server/models/question.js-2-    { Schema } = require("mongoose"),
+./server/models/question.js:3:    // #mongoose_schema - start
+./server/models/question.js-4-    questionSchema = new Schema(
+./server/models/question.js-5-        {
+./server/models/question.js-6-            title: { //Require title and description
+./server/models/question.js-7-                type: String,
+./server/models/question.js-8-                required: true,
+./server/models/question.js-9-                unique: true
+./server/models/question.js-10-            },
+./server/models/question.js-11-            text: {
+--
+--
+./server/models/question.js-13-                required: true
+./server/models/question.js-14-            },
+./server/models/question.js-15-            date: {
+./server/models/question.js-16-                type: Date,
+./server/models/question.js-17-                default: Date.now
+./server/models/question.js-18-            }
+./server/models/question.js-19-        }
+./server/models/question.js-20-    );
+./server/models/question.js:21:// #mongoose_schema - end
+./server/models/question.js-22-module.exports = mongoose.model("Question", questionSchema);
+---------------#seed_data-------------
+./server/seed.js-1-"use strict";
+./server/seed.js:2:// #seed_data - start
+./server/seed.js-3-const mongoose = require("mongoose"),
+./server/seed.js-4-    Question = require("./models/question");
+./server/seed.js-5-mongoose.Promise = global.Promise;
+./server/seed.js-6-mongoose.connect(
+./server/seed.js-7-    process.env.MONGODB_URI || "mongodb://localhost:27017/q_a",
+./server/seed.js-8-    { useNewUrlParser: true, useFindAndModify: false }
+./server/seed.js-9-);
+./server/seed.js-10-
+--
+--
+./server/seed.js-22-    return Question.create({
+./server/seed.js-23-        title: "C",
+./server/seed.js-24-        text: "Ccccccc."
+./server/seed.js-25-    });
+./server/seed.js-26-}).then(question => console.log(question.title)).catch(error => console.log(error.message)).then(() => {
+./server/seed.js-27-    console.log("DONE");
+./server/seed.js-28-    mongoose.connection.close();
+./server/seed.js-29-});
+./server/seed.js:30:// #seed_data - end
+---------------#simple_test-------------
+---------------#test_content-------------
+---------------#second_action_controller-------------
+./server/controllers/questionsController.js-65-                console.log(`Error fetching question by ID: ${error.message}`);
+./server/controllers/questionsController.js-66-                next(error);
+./server/controllers/questionsController.js-67-            });
+./server/controllers/questionsController.js-68-    },
+./server/controllers/questionsController.js-69-
+./server/controllers/questionsController.js-70-    showView: (req, res) => {
+./server/controllers/questionsController.js-71-        res.render("questions/show");
+./server/controllers/questionsController.js-72-    },
+./server/controllers/questionsController.js:73:// #second_action_controller - start
+./server/controllers/questionsController.js-74-    edit: (req, res, next) => {
+./server/controllers/questionsController.js-75-        let questionId = req.params.id;
+./server/controllers/questionsController.js-76-        Question.findById(questionId)
+./server/controllers/questionsController.js-77-            .then(question => {
+./server/controllers/questionsController.js-78-                res.render("questions/edit", {
+./server/controllers/questionsController.js-79-                    question: question
+./server/controllers/questionsController.js-80-                });
+./server/controllers/questionsController.js-81-            })
+--
+--
+./server/controllers/questionsController.js-97-                res.locals.question = question;
+./server/controllers/questionsController.js-98-                next();
+./server/controllers/questionsController.js-99-            })
+./server/controllers/questionsController.js-100-            .catch(error => {
+./server/controllers/questionsController.js-101-                console.log(`Error updating question by ID: ${error.message}`);
+./server/controllers/questionsController.js-102-                next(error);
+./server/controllers/questionsController.js-103-            });
+./server/controllers/questionsController.js-104-    },
+./server/controllers/questionsController.js:105:// #second_action_controller - end
+./server/controllers/questionsController.js-106-    delete: (req, res, next) => {
+./server/controllers/questionsController.js-107-        let questionId = req.params.id;
+./server/controllers/questionsController.js-108-        Question.findByIdAndRemove(questionId)
+./server/controllers/questionsController.js-109-            .then(() => {
+./server/controllers/questionsController.js-110-                res.locals.redirect = "/questions";
+./server/controllers/questionsController.js-111-                next();
+./server/controllers/questionsController.js-112-            })
+./server/controllers/questionsController.js-113-            .catch(error => {
+---------------#second_action_view-------------
+./server/views/questions/edit.ejs:1:<!-- #second_action_view - start -->
+./server/views/questions/edit.ejs-2-<div class="data-form">
+./server/views/questions/edit.ejs-3-    <form class="form-signin" action="<%=`/questions/${question._id}/update?_method=PUT`%>" method="POST">
+./server/views/questions/edit.ejs-4-        <h2 class="form-signin-heading">Edit Question:</h2>
+./server/views/questions/edit.ejs-5-        <label for="inputTitle">Title</label>
+./server/views/questions/edit.ejs-6-        <input type="text" name="title" id="inputTitle" class="form-control" value="<%= question.title %>" placeholder="Title" autofocus>
+./server/views/questions/edit.ejs-7-        <label for="inputText">Text</label>
+./server/views/questions/edit.ejs-8-        <input type="text" name="text" id="inputText" class="form-control" value="<%= question.text %>" placeholder="Text" autofocus>
+./server/views/questions/edit.ejs-9-        <br/><button class="btn btn-lg btn-primary btn-block" type="submit">Save</button>
+--
+--
+./server/views/questions/edit.ejs-4-        <h2 class="form-signin-heading">Edit Question:</h2>
+./server/views/questions/edit.ejs-5-        <label for="inputTitle">Title</label>
+./server/views/questions/edit.ejs-6-        <input type="text" name="title" id="inputTitle" class="form-control" value="<%= question.title %>" placeholder="Title" autofocus>
+./server/views/questions/edit.ejs-7-        <label for="inputText">Text</label>
+./server/views/questions/edit.ejs-8-        <input type="text" name="text" id="inputText" class="form-control" value="<%= question.text %>" placeholder="Text" autofocus>
+./server/views/questions/edit.ejs-9-        <br/><button class="btn btn-lg btn-primary btn-block" type="submit">Save</button>
+./server/views/questions/edit.ejs-10-    </form>
+./server/views/questions/edit.ejs-11-</div>
+./server/views/questions/edit.ejs:12:<!-- #second_action_view - end -->
+---------------#second_action_test-------------
+---------------#feature_view-------------
+./server/views/questions/index.ejs-10-        <th>Title</th>
+./server/views/questions/index.ejs-11-        <th>Text</th>
+./server/views/questions/index.ejs-12-        <th>Date</th>
+./server/views/questions/index.ejs-13-        <th>Edit</th>
+./server/views/questions/index.ejs-14-        <th>Delete</th>
+./server/views/questions/index.ejs-15-    </tr>
+./server/views/questions/index.ejs-16-    </thead>
+./server/views/questions/index.ejs-17-    <tbody>
+./server/views/questions/index.ejs:18:    <!-- #feature_view - start -->
+./server/views/questions/index.ejs-19-    <% questions.forEach(question => { %>
+./server/views/questions/index.ejs-20-        <tr>
+./server/views/questions/index.ejs-21-            <td>
+./server/views/questions/index.ejs-22-                <a href="<%= `/questions/${question._id}` %>">
+./server/views/questions/index.ejs-23-                    <%= question.title %>
+./server/views/questions/index.ejs-24-                </a>
+./server/views/questions/index.ejs-25-            </td>
+./server/views/questions/index.ejs-26-            <td>
+--
+--
+./server/views/questions/index.ejs-26-            <td>
+./server/views/questions/index.ejs-27-                <%= question.text %>
+./server/views/questions/index.ejs-28-            </td>
+./server/views/questions/index.ejs-29-            <td>
+./server/views/questions/index.ejs-30-                <a href="<%= `/questions/${question._id}` %>">
+./server/views/questions/index.ejs-31-                    <%= question.date %>
+./server/views/questions/index.ejs-32-                </a>
+./server/views/questions/index.ejs-33-            </td>
+./server/views/questions/index.ejs:34:            <!-- #feature_view - end -->
+./server/views/questions/index.ejs-35-            <td>
+./server/views/questions/index.ejs-36-                <a href="<%=`questions/${question._id}/edit`%>">
+./server/views/questions/index.ejs-37-                    Edit
+./server/views/questions/index.ejs-38-                </a>
+./server/views/questions/index.ejs-39-            </td>
+./server/views/questions/index.ejs-40-            <td>
+./server/views/questions/index.ejs-41-                <a href="<%= `questions/${question._id}/delete?_method=DELETE` %>" onclick="return confirm('Are you sure you want to delete this record?')" a>Delete</a>
+./server/views/questions/index.ejs-42-            </td>
+---------------#feature_controller-------------
+./server/controllers/questionsController.js-9-        return {
+./server/controllers/questionsController.js-10-            title: body.title,
+./server/controllers/questionsController.js-11-            text: body.text,
+./server/controllers/questionsController.js-12-            date: body.date
+./server/controllers/questionsController.js-13-        };
+./server/controllers/questionsController.js-14-    };
+./server/controllers/questionsController.js-15-
+./server/controllers/questionsController.js-16-module.exports = {
+./server/controllers/questionsController.js:17:// #feature_controller - start
+./server/controllers/questionsController.js-18-    index: (req, res, next) => {
+./server/controllers/questionsController.js-19-        Question.find()
+./server/controllers/questionsController.js-20-            .then(questions => {
+./server/controllers/questionsController.js-21-                res.locals.questions = questions;
+./server/controllers/questionsController.js-22-                next();
+./server/controllers/questionsController.js-23-            })
+./server/controllers/questionsController.js-24-            .catch(error => {
+./server/controllers/questionsController.js-25-                console.log(`Error fetching questions: ${error.message}`);
+--
+--
+./server/controllers/questionsController.js-24-            .catch(error => {
+./server/controllers/questionsController.js-25-                console.log(`Error fetching questions: ${error.message}`);
+./server/controllers/questionsController.js-26-                next(error);
+./server/controllers/questionsController.js-27-            });
+./server/controllers/questionsController.js-28-    },
+./server/controllers/questionsController.js-29-    indexView: (req, res) => {
+./server/controllers/questionsController.js-30-        res.render("questions/index");
+./server/controllers/questionsController.js-31-    },
+./server/controllers/questionsController.js:32:// #feature_controller - end
+./server/controllers/questionsController.js-33-    new: (req, res) => {
+./server/controllers/questionsController.js-34-        res.render("questions/new");
+./server/controllers/questionsController.js-35-    },
+./server/controllers/questionsController.js-36-
+./server/controllers/questionsController.js-37-    create: (req, res, next) => {
+./server/controllers/questionsController.js-38-        let questionParams = getQuestionParams(req.body);
+./server/controllers/questionsController.js-39-        Question.create(questionParams)
+./server/controllers/questionsController.js-40-            .then(question => {
+---------------#feature_test-------------
+---------------#association-------------
+./server/models/user.js-27-          unique: true
+./server/models/user.js-28-      },
+./server/models/user.js-29-      password: {
+./server/models/user.js-30-          type: String,
+./server/models/user.js-31-          required: true
+./server/models/user.js-32-      },
+./server/models/user.js-33-    //#add_user_field - end
+./server/models/user.js-34-
+./server/models/user.js:35:      // #association - start
+./server/models/user.js-36-        questions: [{ type: Schema.Types.ObjectId, ref: "Question" }]
+--
+./server/models/user.js-36-        questions: [{ type: Schema.Types.ObjectId, ref: "Question" }]
+./server/models/user.js:37:      // #association - end
+./server/models/user.js-38-}
+./server/models/user.js-39-);
+./server/models/user.js-40-
+./server/models/user.js-41-userSchema.virtual("fullName").get(function() {
+./server/models/user.js-42-    return `${this.name.first} ${this.name.last}`;
+./server/models/user.js-43-});
+./server/models/user.js-44-userSchema.plugin(passportLocalMongoose, {
+./server/models/user.js-45-    usernameField: "email"
+---------------#association-------------
+./server/models/user.js-27-          unique: true
+./server/models/user.js-28-      },
+./server/models/user.js-29-      password: {
+./server/models/user.js-30-          type: String,
+./server/models/user.js-31-          required: true
+./server/models/user.js-32-      },
+./server/models/user.js-33-    //#add_user_field - end
+./server/models/user.js-34-
+./server/models/user.js:35:      // #association - start
+./server/models/user.js-36-        questions: [{ type: Schema.Types.ObjectId, ref: "Question" }]
+--
+./server/models/user.js-36-        questions: [{ type: Schema.Types.ObjectId, ref: "Question" }]
+./server/models/user.js:37:      // #association - end
+./server/models/user.js-38-}
+./server/models/user.js-39-);
+./server/models/user.js-40-
+./server/models/user.js-41-userSchema.virtual("fullName").get(function() {
+./server/models/user.js-42-    return `${this.name.first} ${this.name.last}`;
+./server/models/user.js-43-});
+./server/models/user.js-44-userSchema.plugin(passportLocalMongoose, {
+./server/models/user.js-45-    usernameField: "email"
+---------------#api_route-------------
+./server/routes/apiRoutes.js:1:// #api_route - start
+./server/routes/apiRoutes.js-2-const router = require("express").Router(),
+./server/routes/apiRoutes.js-3-    questionsController = require("../controllers/questionsController");
+./server/routes/apiRoutes.js-4-
+./server/routes/apiRoutes.js-5-router.get("/questions", questionsController.index, questionsController.filterUserQuestions,questionsController.respondJSON);
+./server/routes/apiRoutes.js-6-router.get("/questions/:id/vote", questionsController.vote, questionsController.respondJSON);
+./server/routes/apiRoutes.js-7-router.use(questionsController.errorJSON);
+./server/routes/apiRoutes.js-8-
+./server/routes/apiRoutes.js-9-module.exports = router;
+--
+--
+./server/routes/apiRoutes.js-2-const router = require("express").Router(),
+./server/routes/apiRoutes.js-3-    questionsController = require("../controllers/questionsController");
+./server/routes/apiRoutes.js-4-
+./server/routes/apiRoutes.js-5-router.get("/questions", questionsController.index, questionsController.filterUserQuestions,questionsController.respondJSON);
+./server/routes/apiRoutes.js-6-router.get("/questions/:id/vote", questionsController.vote, questionsController.respondJSON);
+./server/routes/apiRoutes.js-7-router.use(questionsController.errorJSON);
+./server/routes/apiRoutes.js-8-
+./server/routes/apiRoutes.js-9-module.exports = router;
+./server/routes/apiRoutes.js:10:// #api_route - end
+---------------#api_status_test-------------
+---------------#test_api_content-------------
+---------------#api_implementation-------------
+./server/controllers/questionsController.js-1-"use strict";
+./server/controllers/questionsController.js-2-// #index_draft
+./server/controllers/questionsController.js-3-const Question = require("../models/question"),
+./server/controllers/questionsController.js:4:    // #api_implementation - start
+./server/controllers/questionsController.js-5-    httpStatus = require("http-status-codes"),
+./server/controllers/questionsController.js-6-    User = require("../models/user"),
+--
+./server/controllers/questionsController.js-5-    httpStatus = require("http-status-codes"),
+./server/controllers/questionsController.js-6-    User = require("../models/user"),
+./server/controllers/questionsController.js:7:    // #api_implementation - end
+./server/controllers/questionsController.js-8-    getQuestionParams = body => {
+./server/controllers/questionsController.js-9-        return {
+./server/controllers/questionsController.js-10-            title: body.title,
+./server/controllers/questionsController.js-11-            text: body.text,
+./server/controllers/questionsController.js-12-            date: body.date
+./server/controllers/questionsController.js-13-        };
+./server/controllers/questionsController.js-14-    };
+./server/controllers/questionsController.js-15-
+--
+--
+./server/controllers/questionsController.js-110-                res.locals.redirect = "/questions";
+./server/controllers/questionsController.js-111-                next();
+./server/controllers/questionsController.js-112-            })
+./server/controllers/questionsController.js-113-            .catch(error => {
+./server/controllers/questionsController.js-114-                console.log(`Error deleting question by ID: ${error.message}`);
+./server/controllers/questionsController.js-115-                next();
+./server/controllers/questionsController.js-116-            });
+./server/controllers/questionsController.js-117-    },
+./server/controllers/questionsController.js:118:    // #api_implementation - start
+./server/controllers/questionsController.js-119-    respondJSON: (req, res) => {
+./server/controllers/questionsController.js-120-        res.json({
+./server/controllers/questionsController.js-121-            status: httpStatus.OK,
+./server/controllers/questionsController.js-122-            data: res.locals
+./server/controllers/questionsController.js-123-        });
+./server/controllers/questionsController.js-124-    },
+./server/controllers/questionsController.js-125-    errorJSON: (error, req, res, next) => {
+./server/controllers/questionsController.js-126-        let errorObject;
+--
+--
+./server/controllers/questionsController.js-167-                })
+./server/controllers/questionsController.js-168-                .catch(error => {
+./server/controllers/questionsController.js-169-                    next(error);
+./server/controllers/questionsController.js-170-                });
+./server/controllers/questionsController.js-171-        } else {
+./server/controllers/questionsController.js-172-            next(new Error("User must log in."));
+./server/controllers/questionsController.js-173-        }
+./server/controllers/questionsController.js-174-    }
+./server/controllers/questionsController.js:175:    // #api_implementation - end
+./server/controllers/questionsController.js-176-};
+---------------#vue_component-------------
+---------------#vue_component_api-------------
+---------------#vue_component_endpoint-------------
+---------------#additional_story_view-------------
+./server/views/chat.ejs:1:<!-- #additional_story_view - start -->
+./server/views/chat.ejs-2-<% if (currentUser) { %>
+./server/views/chat.ejs-3-    <h1>Chat</h1>
+./server/views/chat.ejs-4-    <form id="chatForm">
+./server/views/chat.ejs-5-        <input id="chat-input" type="text">
+./server/views/chat.ejs-6-        <input id="chat-user-id" type="hidden" value="<%= currentUser._id %>">
+./server/views/chat.ejs-7-        <input id="chat-user-name" type="hidden" value="<%=currentUser.fullName %>">
+./server/views/chat.ejs-8-        <input type="submit" value="Send">
+./server/views/chat.ejs-9-    </form>
+--
+--
+./server/views/chat.ejs-4-    <form id="chatForm">
+./server/views/chat.ejs-5-        <input id="chat-input" type="text">
+./server/views/chat.ejs-6-        <input id="chat-user-id" type="hidden" value="<%= currentUser._id %>">
+./server/views/chat.ejs-7-        <input id="chat-user-name" type="hidden" value="<%=currentUser.fullName %>">
+./server/views/chat.ejs-8-        <input type="submit" value="Send">
+./server/views/chat.ejs-9-    </form>
+./server/views/chat.ejs-10-    <div id="chat"></div>
+./server/views/chat.ejs-11-<% } %>
+./server/views/chat.ejs:12:<!-- #additional_story_view - end -->
+---------------#additional_story_controller-------------
+./server/controllers/chatController.js-1-"use strict";
+./server/controllers/chatController.js:2:// #additional_story_controller - start
+./server/controllers/chatController.js-3-const Message = require("../models/message");
+./server/controllers/chatController.js-4-
+./server/controllers/chatController.js-5-module.exports = io => {
+./server/controllers/chatController.js-6-    io.on("connection", client => {
+./server/controllers/chatController.js-7-        Message.find({})
+./server/controllers/chatController.js-8-            .sort({
+./server/controllers/chatController.js-9-                createdAt: -1
+./server/controllers/chatController.js-10-            })
+--
+--
+./server/controllers/chatController.js-29-            m.save()
+./server/controllers/chatController.js-30-                .then(() => {
+./server/controllers/chatController.js-31-                    io.emit("message", messageAttributes);
+./server/controllers/chatController.js-32-                })
+./server/controllers/chatController.js-33-                .catch(error => console.log(`error: ${error.message}`));
+./server/controllers/chatController.js-34-        });
+./server/controllers/chatController.js-35-    });
+./server/controllers/chatController.js-36-};
+./server/controllers/chatController.js:37:// #additional_story_controller - end
+---------------#additional_story_test-------------
